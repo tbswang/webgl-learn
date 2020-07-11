@@ -1,4 +1,11 @@
-import WebGLUtils from './webgl-utils.js'
+// const WebGLUtils = require('./webgl-utils.js').default;
+// const WebGLDebugUtils = require('./webgl-debug.js').default;
+import WebGLUtils from './webgl-utils.js';
+import  WebGLDebugUtils from './webgl-debug.js';
+
+export interface WebGL2RenderingContextWithProgram extends WebGL2RenderingContext{
+  program?: WebGLProgram
+}
 
 /**
  * 给gl挂载一个对象
@@ -16,29 +23,32 @@ export function initShaders(
     console.log('Fail to create program');
     return false;
   }
-  // gl.useProgram(pro)
+  gl.useProgram(program);
+  gl.program = program;
+
+  return true;
 }
 
 /**
  * 创建一个project对象
- * @param gl 
- * @param vshader 
- * @param fshader 
+ * @param gl
+ * @param vshader
+ * @param fshader
  */
 export function createProgram(
   gl: WebGL2RenderingContext,
   vshader: string,
   fshader: string
-) {
+): WebGLProgram {
   const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vshader);
   const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fshader);
-  if(vertexShader || fragmentShader){
-    return null
+  if (!vertexShader || !fragmentShader) {
+    return null;
   }
 
   // create a program object
   const program = gl.createProgram();
-  if(!program){
+  if (!program) {
     return null;
   }
 
@@ -48,7 +58,7 @@ export function createProgram(
   gl.linkProgram(program);
 
   const linked = gl.getProgramParameter(program, gl.LINK_STATUS);
-  if(!linked){
+  if (!linked) {
     const err = gl.getProgramInfoLog(program);
     console.error('Failed to link program', err);
     gl.deleteProgram(program);
@@ -56,14 +66,14 @@ export function createProgram(
     gl.deleteShader(fragmentShader);
     return null;
   }
-  return program; 
+  return program;
 }
 
 export function loadShader(
   gl: WebGL2RenderingContext,
   type: GLenum,
   source: string
-) {
+): WebGLShader {
   // create shader object
   const shader: WebGLShader = gl.createShader(type);
   if (shader === null) {
@@ -88,7 +98,15 @@ export function loadShader(
   return shader;
 }
 
+export function getWebGLContext(
+  canvas: HTMLCanvasElement,
+  optp_debug?: Boolean
+): WebGLRenderingContext {
+  let gl: WebGLRenderingContext = WebGLUtils.setupWebGL(canvas);
+  if (!gl) return null;
 
-export function getWebGLContext(canvas: HTMLCanvasElement, optp_debug){
-  const gl = WebGLUtils.setupWebgl(canvas)
+  if (arguments.length < 2 || optp_debug) {
+    gl = WebGLDebugUtils.makeDebugContext(gl);
+  }
+  return gl;
 }

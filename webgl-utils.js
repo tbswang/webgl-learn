@@ -57,7 +57,7 @@
  * visible.
  */
 
-export default WebGLUtils = function() {
+const WebGLUtils = function() {
 
 /**
  * Creates the HTLM for a failure message
@@ -195,3 +195,5 @@ if (!window.cancelAnimationFrame) {
                                  window.oCancelAnimationFrame || window.oCancelRequestAnimationFrame ||
                                  window.clearTimeout);
 }
+
+export default WebGLUtils;
