@@ -1,9 +1,11 @@
-import { getWebGLContext, initShaders } from './cuon-utils';
+import { getWebGLContext, initShaders, WebGL2RenderingContextWithProgram } from './cuon-utils';
 // 定点着色器
 const VSHADER_SOURCE: string = `
+attribute vec4 a_Position;
+attribute float a_PointSize;
 void main(){
-  gl_Position = vec4(0., 0.5, 0.0, 1.0);
-  gl_PointSize = 10.0;
+  gl_Position = a_Position;
+  gl_PointSize = a_PointSize;
 }
 `;
 
@@ -18,7 +20,7 @@ function main() {
   const canvas: HTMLCanvasElement = document.getElementById('point');
   // const gl = canvas.getContext("webgl");
 
-  const gl = getWebGLContext(canvas);
+  const gl: WebGL2RenderingContextWithProgram = getWebGLContext(canvas);
   if (!gl) {
     console.error('falied to init webgl');
     return;
@@ -28,6 +30,18 @@ function main() {
     console.log('failed to  shader');
     return;
   }
+
+  const a_Position = gl.getAttribLocation(gl.program, 'a_Position' )
+
+  if(a_Position < 0) {
+    console.error('fail to get position of a_Position');
+    return;
+  }
+
+  gl.vertexAttrib3f(a_Position, .5, .5, .0 );
+
+  const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
+  gl.vertexAttrib1f(a_PointSize, 5.0);
 
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 

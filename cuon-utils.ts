@@ -14,10 +14,10 @@ export interface WebGL2RenderingContextWithProgram extends WebGL2RenderingContex
  * @param fshader
  */
 export function initShaders(
-  gl: WebGL2RenderingContext,
+  gl: WebGL2RenderingContextWithProgram,
   vshader: string,
   fshader: string
-) {
+): Boolean {
   const program = createProgram(gl, vshader, fshader);
   if (!program) {
     console.log('Fail to create program');
@@ -101,8 +101,8 @@ export function loadShader(
 export function getWebGLContext(
   canvas: HTMLCanvasElement,
   optp_debug?: Boolean
-): WebGLRenderingContext {
-  let gl: WebGLRenderingContext = WebGLUtils.setupWebGL(canvas);
+): WebGL2RenderingContextWithProgram {
+  let gl: WebGL2RenderingContextWithProgram = WebGLUtils.setupWebGL(canvas);
   if (!gl) return null;
 
   if (arguments.length < 2 || optp_debug) {
