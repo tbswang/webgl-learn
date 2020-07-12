@@ -35,12 +35,13 @@ const click = (
 ) => {
   const { clientX, clientY } = e;
   const rect = (e.target as HTMLElement).getBoundingClientRect();
-  debugger;
+  // debugger;
   const x = (clientX - rect.x - canvas.width / 2) / (canvas.width / 2);
   const y = (canvas.height / 2 - (clientY - rect.y)) / (canvas.height / 2);
   g_points.push(x);
   g_points.push(y);
 
+  // 注释掉这一行, 点击一下就变成了透明的, 因为默认的颜色分量 是0.0, 就是透明的.
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   const len = g_points.length;
