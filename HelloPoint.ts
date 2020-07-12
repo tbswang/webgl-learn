@@ -1,4 +1,7 @@
 import { getWebGLContext, initShaders, WebGL2RenderingContextWithProgram } from './cuon-utils';
+
+export type vec4 = [number, number, number, number]
+
 // 定点着色器
 const VSHADER_SOURCE: string = `
 attribute vec4 a_Position;
@@ -15,6 +18,27 @@ void main(){
   gl_FragColor=vec4(.0, 1., .0, 1.0);
 }
 `;
+
+const g_points: number[] = [];
+const click = (e: MouseEvent, gl: WebGL2RenderingContextWithProgram, canvas: HTMLCanvasElement, a_Position: number ) => {
+  const { clientX, clientY} = e;
+  const rect = (e.target as HTMLElement).getBoundingClientRect();
+  debugger;
+  const x = ((clientX- rect.x) - canvas.width /2) / (canvas.width/2);
+  const y = (canvas.height /2 - (clientY - rect.y)) / (canvas.height /2);
+  g_points.push(x);
+  g_points.push(y);
+
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  const len = g_points.length;
+  for(let i = 0 ; i< len; i+=2){
+    gl.vertexAttrib3f(a_Position, g_points[i], g_points[i+1], .0);
+
+    gl.drawArrays(gl.POINTS, 0, 1);
+  }
+
+}
 function main() {
   //
   const canvas: HTMLCanvasElement = document.getElementById('point');
@@ -32,16 +56,16 @@ function main() {
   }
 
   const a_Position = gl.getAttribLocation(gl.program, 'a_Position' )
-
   if(a_Position < 0) {
     console.error('fail to get position of a_Position');
     return;
   }
-
   gl.vertexAttrib3f(a_Position, .5, .5, .0 );
 
   const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
   gl.vertexAttrib1f(a_PointSize, 5.0);
+
+  canvas.onmousedown = (e) => click(e, gl, canvas, a_Position);
 
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
