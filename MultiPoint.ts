@@ -3,6 +3,7 @@ import {
   initShaders,
   WebGL2RenderingContextWithProgram,
 } from './cuon-utils';
+import { Matrix4 } from './cuon-matrix';
 import { black } from './common';
 
 const VSHADER_SOURCE: string = `
@@ -43,20 +44,12 @@ function main() {
     return;
   }
 
-  const radian = (Math.PI * ANGLE) / 180.0;
-  const cosB = Math.cos(radian);
-  const sinB = Math.sin(radian);
-
-  const xFormMatrix = new Float32Array([
-    cosB, sinB, 0.0, .0,
-    -sinB, cosB, .0, .0,
-    .0, .0, 1.0, .0,
-    .0, .0, .0, 1.0
-  ])
+  const xFormMatrix = new Matrix4();
+  xFormMatrix.setRotate(ANGLE, 0, 0, 1);
 
   const u_xFormMatrix = gl.getUniformLocation(gl.program, 'u_xFormMatrix');
 
-  gl.uniformMatrix4fv(u_xFormMatrix, false, xFormMatrix);
+  gl.uniformMatrix4fv(u_xFormMatrix, false, xFormMatrix.elements);
 
   gl.clearColor(...black);
   gl.clear(gl.COLOR_BUFFER_BIT);
