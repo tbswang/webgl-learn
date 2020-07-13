@@ -7,9 +7,12 @@ import { black } from './common';
 
 const VSHADER_SOURCE: string = `
 attribute vec4 a_Position;
-uniform vec4 u_Translation;
+attribute float u_CosB, u_SinB;
 void main(){
-  gl_Position = a_Position + u_Translation;
+  gl_Position.x = a_Position.x * u_CosB - a_Position.y * u_SinB;
+  gl_Position.y = a_Position.x * u_SinB - a_Position.y * u_CosB;
+  gl_Position.z = a_Position.z;
+  gl_Position.w = 1.0;
 }
 `;
 
@@ -21,9 +24,7 @@ void main(){
 }
 `;
 
-const tx = 0.5;
-const ty = 0.5;
-const tz = 0.0;
+const ANGLE = 90.0;
 
 function main() {
   const canvas: HTMLCanvasElement = document.getElementById(
@@ -45,9 +46,15 @@ function main() {
     return;
   }
 
-  const u_Translation = gl.getUniformLocation(gl.program, 'u_Translation');
+  const radian = Math.PI * ANGLE / 180.0;
+  const cosB = Math.cos(radian);
+  const sinB = Math.sin(radian);
 
-  gl.uniform4f(u_Translation, tx, ty, tz, 0.0);
+  const u_CosB = gl.getAttribLocation(gl.program, 'u_CosB');
+  const u_SinB = gl.getAttribLocation(gl.program, 'u_SinB');
+
+  gl.vertexAttrib1f(u_CosB, cosB);
+  gl.vertexAttrib1f(u_SinB, sinB);
 
   gl.clearColor(...black);
   gl.clear(gl.COLOR_BUFFER_BIT);
