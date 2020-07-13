@@ -53,9 +53,9 @@ function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
     0.5,
     -0.5,
     0.5,
+    -0.5,
+    -0.5,
     0.5,
-    -0.5,
-    -0.5,
     -0.5,
   ]);
   const n = 4;
