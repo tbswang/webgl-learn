@@ -9,7 +9,6 @@ const VSHADER_SOURCE: string = `
 attribute vec4 a_Position;
 void main(){
   gl_Position = a_Position;;
-  gl_PointSize = 10.0;
 }
 `;
 
@@ -43,12 +42,23 @@ function main() {
 
   gl.clearColor(...black);
   gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawArrays(gl.POINTS, 0, n);
+  // gl.drawArrays(gl.TRIANGLES, 0, n);
+  // gl.drawArrays(gl.LINES, 0, n);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
 }
 
 function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
-  const vertices = new Float32Array([0.0, 0.5, -0.5, -0.5, 0.5, -0.5]);
-  const n = 3;
+  const vertices = new Float32Array([
+    0.5,
+    0.5,
+    -0.5,
+    0.5,
+    0.5,
+    -0.5,
+    -0.5,
+    -0.5,
+  ]);
+  const n = 4;
 
   const vertexBuffer: WebGLBuffer = gl.createBuffer();
   if (!vertexBuffer) {
