@@ -7,8 +7,9 @@ import { black } from './common';
 
 const VSHADER_SOURCE: string = `
 attribute vec4 a_Position;
+uniform vec4 u_Translation;
 void main(){
-  gl_Position = a_Position;;
+  gl_Position = a_Position + u_Translation;
 }
 `;
 
@@ -19,6 +20,10 @@ void main(){
   gl_FragColor = u_FragColor;
 }
 `;
+
+const tx = 0.5;
+const ty = 0.5;
+const tz = 0.0;
 
 function main() {
   const canvas: HTMLCanvasElement = document.getElementById(
@@ -40,6 +45,10 @@ function main() {
     return;
   }
 
+  const u_Translation = gl.getUniformLocation(gl.program, 'u_Translation');
+
+  gl.uniform4f(u_Translation, tx, ty, tz, 0.0);
+
   gl.clearColor(...black);
   gl.clear(gl.COLOR_BUFFER_BIT);
   // gl.drawArrays(gl.TRIANGLES, 0, n);
@@ -48,17 +57,8 @@ function main() {
 }
 
 function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
-  const vertices = new Float32Array([
-    0.5,
-    0.5,
-    -0.5,
-    0.5,
-    -0.5,
-    -0.5,
-    0.5,
-    -0.5,
-  ]);
-  const n = 4;
+  const vertices = new Float32Array([0, 0.5, -0.5, -0.5, 0.5, -0.5]);
+  const n = 3;
 
   const vertexBuffer: WebGLBuffer = gl.createBuffer();
   if (!vertexBuffer) {
