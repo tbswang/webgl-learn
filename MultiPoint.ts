@@ -8,9 +8,9 @@ import { black } from './common';
 
 const VSHADER_SOURCE: string = `
 attribute vec4 a_Position;
-uniform mat4 u_xFormMatrix;
+uniform mat4 u_ModelMatrix;
 void main(){
-  gl_Position = u_xFormMatrix * a_Position;
+  gl_Position = u_ModelMatrix * a_Position;
 }
 `;
 
@@ -22,7 +22,9 @@ void main(){
 }
 `;
 
-const ANGLE = 90.0;
+const ANGLE_STEP = 45.0; // 每秒的旋转速度
+let g_last = Date.now();
+let curentAngle = 0.0;
 
 function main() {
   const canvas: HTMLCanvasElement = document.getElementById(
@@ -43,19 +45,41 @@ function main() {
     console.error('fail to set posion of vertices');
     return;
   }
-
-  const xFormMatrix = new Matrix4();
-  xFormMatrix.setRotate(ANGLE, 0, 0, 1);
-
-  const u_xFormMatrix = gl.getUniformLocation(gl.program, 'u_xFormMatrix');
-
-  gl.uniformMatrix4fv(u_xFormMatrix, false, xFormMatrix.elements);
-
   gl.clearColor(...black);
+
+  const u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
+
+  const modelMatrix = new Matrix4();
+
+  const tick = () => {
+    curentAngle = animate(curentAngle);
+    draw(gl, n, curentAngle, modelMatrix, u_ModelMatrix);
+    requestAnimationFrame(tick);
+  };
+  tick();
+}
+
+function draw(
+  gl: WebGL2RenderingContextWithProgram,
+  n: number,
+  curentAngle: number,
+  modelMatrix: Matrix4,
+  u_ModelMatrix: WebGLUniformLocation
+) {
+  modelMatrix.setRotate(curentAngle, 0, 0, 1);
+
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+
   gl.clear(gl.COLOR_BUFFER_BIT);
-  // gl.drawArrays(gl.TRIANGLES, 0, n);
-  // gl.drawArrays(gl.LINES, 0, n);
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+
+  gl.drawArrays(gl.TRIANGLES, 0, n);
+}
+function animate(angle: number): number {
+  const now = Date.now();
+  const elapsed = now - g_last;
+  g_last = now;
+  const newAngle = angle + (ANGLE_STEP * elapsed) / 1000.0;
+  return newAngle % 360.0;
 }
 
 function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
