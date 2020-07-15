@@ -642,7 +642,7 @@ export class Matrix4 {
    * @return this
    */
   translate(x: number, y: number, z: number) {
-    let e = this.elements;
+    const e = this.elements;
     e[12] += e[0] * x + e[4] * y + e[8] * z;
     e[13] += e[1] * x + e[5] * y + e[9] * z;
     e[14] += e[2] * x + e[6] * y + e[10] * z;
@@ -659,7 +659,7 @@ export class Matrix4 {
    * @return this
    */
   setRotate(angle: number, x: number, y: number, z: number) {
-    let e: Float32Array | number[],
+    let e: Float32Array,
       s: number,
       c: number,
       len: number,

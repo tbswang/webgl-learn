@@ -4,7 +4,7 @@ import {
   WebGL2RenderingContextWithProgram,
 } from './cuon-utils';
 import { Matrix4 } from './cuon-matrix';
-import { black } from './common';
+import { black, COLOR } from './common';
 
 const VSHADER_SOURCE: string = `
 attribute vec4 a_Position;
@@ -22,9 +22,9 @@ void main(){
 }
 `;
 
-const ANGLE_STEP = 45.0; // 每秒的旋转速度
+let ANGLE_STEP = 45.0; // 每秒的旋转速度
 let g_last = Date.now();
-let curentAngle = 0.0;
+let curentAngle = 90.0;
 
 function main() {
   const canvas: HTMLCanvasElement = document.getElementById(
@@ -57,6 +57,16 @@ function main() {
     requestAnimationFrame(tick);
   };
   tick();
+  // modelMatrix.translate(0.35, 0.0, 0.0); //
+  // modelMatrix.rotate(curentAngle, 0, 0, 1); // 计算旋转矩阵
+
+  // gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+
+  // gl.clear(gl.COLOR_BUFFER_BIT); // 清空canvas, 不清空背景
+
+  // gl.drawArrays(gl.TRIANGLES, 0, n);
+
+  // originPoint(gl);
 }
 
 function draw(
@@ -67,10 +77,11 @@ function draw(
   u_ModelMatrix: WebGLUniformLocation
 ) {
   modelMatrix.setRotate(curentAngle, 0, 0, 1);
+  modelMatrix.translate(0.35, 0.0, 0.0);
 
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
 
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.clear(gl.COLOR_BUFFER_BIT); // 清空canvas, 不清空背景
 
   gl.drawArrays(gl.TRIANGLES, 0, n);
 }
@@ -106,3 +117,36 @@ function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
 }
 
 main();
+
+function originPoint(gl: WebGL2RenderingContextWithProgram) {
+  const VSHADER_SOURCE: string = `
+  void main(){
+    gl_Position = vec4(.0, .0, .0, 1.0);
+    gl_PointSize = 10.0;
+  }
+  `;
+
+  const red = COLOR.red.join(',');
+
+  const FSHADER_SOURCE: string = `
+  void main(){
+    gl_FragColor = vec4(${red});
+  }
+  `;
+
+  if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
+    console.error('fail to init shader');
+    return;
+  }
+  // gl.clear(gl.COLOR_BUFFER_BIT);
+
+  gl.drawArrays(gl.POINTS, 0, 1);
+}
+
+window.up = () => {
+  ANGLE_STEP += 10;
+};
+
+window.down = () => {
+  ANGLE_STEP = 0.0;
+};
