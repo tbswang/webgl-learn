@@ -7,17 +7,19 @@ import { black, getRandomArbitrary } from './common';
 
 const VSHADER_SOURCE = `
 attribute vec4 a_Position;
-attribute float a_PointSize;
+attribute vec4 a_Color;
+varying vec4 v_Color;
 void main(){
   gl_Position = a_Position;
-  gl_PointSize = a_PointSize;
+  gl_PointSize = 10.0;
+  v_Color = a_Color;
 }
 `;
 const FSHADER_SOURCE = `
 precision mediump float;
-uniform vec4 u_FragColor;
+varying vec4 v_Color;
 void main(){
-  gl_FragColor = u_FragColor;
+  gl_FragColor = v_Color;
 }
 `;
 
@@ -47,32 +49,27 @@ function main() {
 }
 
 function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
-  const n = 10;
-  const verticesSizes: Float32Array = createPoint(n);
-  // const verticesSizes = new Float32Array([
-  //   0.0,
-  //   0.5,
-  //   10.0,
-  //   -0.5,
-  //   -0.5,
-  //   20.0,
-  //   0.5,
-  //   -0.5,
-  //   30.0,
-  // ]);
+  const n = 3;
+  // const verticesSizes: Float32Array = createPoint(n);
+  const verticesSizes = new Float32Array([
+    0.0, 0.5, 1.0, .0, .0,
+    -0.5, -0.5, .0, 1.0, .0,
+    0.5, -0.5, .0, .0, 1.0
+  ]);
   const vertexSizeBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexSizeBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, verticesSizes, gl.STATIC_DRAW);
   const FSIZE = verticesSizes.BYTES_PER_ELEMENT;
   const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
-  gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 3, 0);
+  // 要赋值的变量, 分量多少, 数据格式, 是否归一化, 每个定点的大小, 最开始的偏移量
+  gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 5, 0);
   gl.enableVertexAttribArray(a_Position);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexSizeBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, verticesSizes, gl.STATIC_DRAW);
-  const a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
-  gl.vertexAttribPointer(a_PointSize, 1, gl.FLOAT, false, FSIZE * 3, FSIZE * 2);
-  gl.enableVertexAttribArray(a_PointSize);
+  const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+  gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 5, FSIZE * 2);
+  gl.enableVertexAttribArray(a_Color);
 
   return n;
 }
@@ -88,8 +85,8 @@ function createPoint(n: number): Float32Array {
   const pointArray = [];
   while (i <= n) {
     pointArray.push(
-      getRandomArbitrary(-1.0, 1.0),
-      getRandomArbitrary(-1.0, 1.0),
+      getRandomArbitrary(-1.0, 1.0), // x
+      getRandomArbitrary(-1.0, 1.0), // y
       getRandomArbitrary(1, 30)
     );
     i++;
