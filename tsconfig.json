@@ -1,9 +1,15 @@
 {
   "compilerOptions": {
-      "module": "commonjs",
-      "baseUrl": "./",
-      "paths": {
-          "*": ["types/*"]
-      }
-  }
+    "module": "commonjs",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "types/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "./resources/**"
+]
 }
