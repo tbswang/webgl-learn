@@ -3,7 +3,7 @@ import {
   getWebGLContext,
   initShaders,
 } from './cuon-utils';
-import { black } from './common';
+import { black, getRandomArbitrary } from './common';
 
 const VSHADER_SOURCE = `
 attribute vec4 a_Position;
@@ -47,19 +47,19 @@ function main() {
 }
 
 function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
-  const n = 3;
-
-  const verticesSizes = new Float32Array([
-    0.0,
-    0.5,
-    10.0,
-    -0.5,
-    -0.5,
-    20.0,
-    0.5,
-    -0.5,
-    30.0,
-  ]);
+  const n = 10;
+  const verticesSizes: Float32Array = createPoint(n);
+  // const verticesSizes = new Float32Array([
+  //   0.0,
+  //   0.5,
+  //   10.0,
+  //   -0.5,
+  //   -0.5,
+  //   20.0,
+  //   0.5,
+  //   -0.5,
+  //   30.0,
+  // ]);
   const vertexSizeBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexSizeBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, verticesSizes, gl.STATIC_DRAW);
@@ -78,3 +78,22 @@ function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
 }
 
 main();
+
+/**
+ * 随机生成n个点 [x1, y1, size1, x2, y2, size2....]
+ * @param n 点的个数
+ */
+function createPoint(n: number): Float32Array {
+  let i = 1;
+  const pointArray = [];
+  while (i <= n) {
+    pointArray.push(
+      getRandomArbitrary(-1.0, 1.0),
+      getRandomArbitrary(-1.0, 1.0),
+      getRandomArbitrary(1, 30)
+    );
+    i++;
+  }
+  // console.log('pointArray', pointArray);
+  return new Float32Array(pointArray);
+}
