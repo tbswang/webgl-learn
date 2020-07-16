@@ -7,19 +7,17 @@ import { black, getRandomArbitrary } from './common';
 
 const VSHADER_SOURCE = `
 attribute vec4 a_Position;
-attribute vec4 a_Color;
-varying vec4 v_Color;
 void main(){
   gl_Position = a_Position;
   gl_PointSize = 10.0;
-  v_Color = a_Color;
 }
 `;
 const FSHADER_SOURCE = `
 precision mediump float;
-varying vec4 v_Color;
+uniform float u_Width;
+uniform float u_Height;
 void main(){
-  gl_FragColor = v_Color;
+  gl_FragColor = vec4(gl_FragCoord.x/u_Width, 0.0, gl_FragCoord.y/u_Height, 1.0);
 }
 `;
 
@@ -45,7 +43,7 @@ function main() {
 
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  gl.drawArrays(gl.POINTS, 0, n);
+  gl.drawArrays(gl.TRIANGLES, 0, n);
 }
 
 function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
@@ -61,15 +59,20 @@ function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
   gl.bufferData(gl.ARRAY_BUFFER, verticesSizes, gl.STATIC_DRAW);
   const FSIZE = verticesSizes.BYTES_PER_ELEMENT;
   const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
-  // 要赋值的变量, 分量多少, 数据格式, 是否归一化, 每个定点的大小, 最开始的偏移量
+  // 要赋值的变量, 取几个数, 数据格式, 是否归一化, 每个定点的大小, 最开始的偏移量
   gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 5, 0);
   gl.enableVertexAttribArray(a_Position);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexSizeBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, verticesSizes, gl.STATIC_DRAW);
-  const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
-  gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 5, FSIZE * 2);
-  gl.enableVertexAttribArray(a_Color);
+  const u_Width = gl.getUniformLocation(gl.program, 'u_Width');
+  const u_Height = gl.getUniformLocation(gl.program, 'u_Height');
+  gl.uniform1f(u_Width, gl.drawingBufferWidth);
+  gl.uniform1f(u_Height, gl.drawingBufferHeight);
+
+  // gl.bindBuffer(gl.ARRAY_BUFFER, vertexSizeBuffer);
+  // gl.bufferData(gl.ARRAY_BUFFER, verticesSizes, gl.STATIC_DRAW);
+  // const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+  // gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 5, FSIZE * 2);
+  // gl.enableVertexAttribArray(a_Color);
 
   return n;
 }
