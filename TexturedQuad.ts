@@ -2,6 +2,7 @@ import { WebGL2RenderingContextWithProgram } from './cuon-utils';
 import { getWebGLContext } from './cuon-utils';
 import { initShaders } from './cuon-utils';
 import skyImg from './resources/sky.jpg';
+import circleImg from './resources/circle.gif';
 import { black } from './common';
 
 const VSHADER_SOURCE = `
@@ -16,10 +17,13 @@ void main(){
 
 const FSHADER_SOURCE = `
 precision mediump float;
-uniform sampler2D u_Sampler;
+uniform sampler2D u_Sampler0;
+uniform sampler2D u_Sampler1;
 varying vec2 v_TexCoord;
 void main(){
-  gl_FragColor = texture2D(u_Sampler, v_TexCoord);
+  vec4 color0 = texture2D(u_Sampler0, v_TexCoord);
+  vec4 color1 = texture2D(u_Sampler1, v_TexCoord);
+  gl_FragColor = color0 * color1;
 }
 `;
 
@@ -87,39 +91,52 @@ function initVertexBuffers(gl: WebGL2RenderingContextWithProgram): number {
 }
 
 function initTextures(gl: WebGL2RenderingContextWithProgram, n: number) {
-  const texture = gl.createTexture();
-  if (!texture) {
-    console.error('fail to create texture');
-    return;
-  }
+  const texture0 = gl.createTexture();
+  const texture1 = gl.createTexture();
 
-  const u_Sampler = gl.getUniformLocation(gl.program, 'u_Sampler');
-  if (!u_Sampler) {
-    console.error('fail to get the location of u_Sampler');
-    return false;
-  }
-  const image = new Image();
-  image.src = skyImg;// parcel 的打包只是将文件复制到dist文件夹,其余的图片行为, 比如加载完成, 和原生一样
-  image.onload = () => loadTexture(gl, n, texture, u_Sampler, image);
+  const u_Sampler0 = gl.getUniformLocation(gl.program, 'u_Sampler1');
+  const u_Sampler1 = gl.getUniformLocation(gl.program, 'u_Sampler1');
+
+  const image0 = new Image();
+  image0.src = skyImg; // parcel 的打包只是将文件复制到dist文件夹,其余的图片行为, 比如加载完成, 和原生一样
+  image0.onload = () => loadTexture(gl, n, texture0, u_Sampler0, image0, 0);
+
+  const image1 = new Image();
+  image1.src = circleImg;
+  image1.onload = () => loadTexture(gl, n, texture1, u_Sampler1, image1, 1);
 
   return true;
 }
+
+let g_texUnit0 = false,
+  g_texUnit1 = false;
 
 function loadTexture(
   gl: WebGL2RenderingContextWithProgram,
   n: number,
   texture: WebGLTexture,
   u_Sampler: WebGLUniformLocation,
-  image: HTMLImageElement
+  image: HTMLImageElement,
+  texUnit
 ) {
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // 处理加载的图像
-  gl.activeTexture(gl.TEXTURE0); // 激活纹理单元
+
+  if (texUnit === 0) {
+    gl.activeTexture(gl.TEXTURE0);
+    g_texUnit0 = true;
+  } else {
+    gl.activeTexture(gl.TEXTURE1);
+    g_texUnit1 = true;
+  }
+
   gl.bindTexture(gl.TEXTURE_2D, texture); // 绑定纹理对象
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-  gl.uniform1i(u_Sampler, 0);
+  gl.uniform1i(u_Sampler, texUnit);
   gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+  if (g_texUnit0 && g_texUnit1) {
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+  }
 }
 
 main();
