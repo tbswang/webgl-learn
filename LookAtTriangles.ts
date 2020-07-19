@@ -3,7 +3,7 @@ import {
   getWebGLContext,
   initShaders,
 } from './cuon-utils';
-import { black, err } from './common';
+import { black, err , KEY_CODE} from './common';
 import { Matrix4 } from './cuon-matrix';
 
 const VSHADER_SOURCE = `
@@ -52,10 +52,12 @@ function main(): void {
   }
 
   const viewMatrix = new Matrix4();
-  viewMatrix.setLookAt(0, 0, 0, 0, 1, -1, 0, 1, 0);
-  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawArrays(gl.TRIANGLES, 0, n);
+  // viewMatrix.setLookAt(0, 0, 0, 0, 1, -1, 0, 1, 0);
+  // gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
+  // gl.clear(gl.COLOR_BUFFER_BIT);
+  // gl.drawArrays(gl.TRIANGLES, 0, n);
+  document.onkeydown = (e) => keyDown(e, gl, n, u_ViewMatrix, viewMatrix);
+  draw(gl, n, u_ViewMatrix, viewMatrix);
 }
 
 function initVertexBuffer(gl: WebGL2RenderingContextWithProgram) {
@@ -142,6 +144,37 @@ function initVertexBuffer(gl: WebGL2RenderingContextWithProgram) {
 
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
   return n;
+}
+
+let g_eyeX = 0.2,
+  g_eyeY = 0.25,
+  g_eyeZ = 0.25;
+
+function keyDown(
+  e: KeyboardEvent,
+  gl: WebGL2RenderingContextWithProgram,
+  n: number,
+  u_ViewMatrix,
+  viewMatrix: Matrix4
+): void {
+  switch (e.keyCode) {
+    case KEY_CODE.right:
+      g_eyeX += .01;
+      break;
+    case KEY_CODE.left:
+      g_eyeX -= .01;
+      break;
+    default:
+      return;
+  }
+  draw(gl, n, u_ViewMatrix, viewMatrix);
+}
+
+function draw(gl: WebGL2RenderingContextWithProgram, n: number, u_ViewMatrix, viewMatrix: Matrix4): void{
+  viewMatrix.setLookAt(g_eyeX, g_eyeY, g_eyeZ, 0, 0, 0, 0, 1, 0);
+  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.drawArrays(gl.TRIANGLES, 0, n);
 }
 
 main();
