@@ -17,4 +17,6 @@ export function err(msg: string) {
 export enum KEY_CODE {
   right = 39,
   left = 37,
+  up = 38,
+  down = 40,
 }

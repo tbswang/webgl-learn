@@ -3,16 +3,16 @@ import {
   getWebGLContext,
   initShaders,
 } from './cuon-utils';
-import { black, err , KEY_CODE} from './common';
+import { black, err, KEY_CODE } from './common';
 import { Matrix4 } from './cuon-matrix';
 
 const VSHADER_SOURCE = `
 attribute vec4 a_Position;
 attribute vec4 a_Color;
-uniform mat4 u_ViewMatrix;
+uniform mat4 u_ProjMatrix;
 varying vec4 v_Color;
 void main(){
-  gl_Position = u_ViewMatrix * a_Position;
+  gl_Position = u_ProjMatrix * a_Position;
   v_Color = a_Color;
 }
 `;
@@ -27,6 +27,7 @@ void main(){
 
 function main(): void {
   const canvas: HTMLCanvasElement = document.querySelector('canvas#point');
+  const nf: HTMLPreElement = document.querySelector('p#nearFar');
   const gl: WebGL2RenderingContextWithProgram = getWebGLContext(canvas);
   if (!gl) {
     console.error('fail to get webgl');
@@ -45,81 +46,32 @@ function main(): void {
     console.error('fail to init vertex buffer');
     return;
   }
-  const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
-  if (u_ViewMatrix < 0) {
-    err('fail to get u_ViewMatrix');
+  const u_ProjMatrix = gl.getUniformLocation(gl.program, 'u_ProjMatrix');
+  if (u_ProjMatrix < 0) {
+    err('fail to get u_ProjMatrix');
     return;
   }
 
-  const viewMatrix = new Matrix4();
-  // viewMatrix.setLookAt(0, 0, 0, 0, 1, -1, 0, 1, 0);
-  // gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
-  // gl.clear(gl.COLOR_BUFFER_BIT);
-  // gl.drawArrays(gl.TRIANGLES, 0, n);
-  document.onkeydown = (e) => keyDown(e, gl, n, u_ViewMatrix, viewMatrix);
-  draw(gl, n, u_ViewMatrix, viewMatrix);
+  const projMatrix = new Matrix4();
+  document.onkeydown = (e) => keyDown(e, gl, n, u_ProjMatrix, projMatrix, nf);
+  draw(gl, n, u_ProjMatrix, projMatrix, nf);
 }
 
 function initVertexBuffer(gl: WebGL2RenderingContextWithProgram) {
   const n = 9;
   const verticesColors = new Float32Array([
-    // Vertex coordinates and color(RGBA)
-    0.0,
-    0.5,
-    -0.4,
-    0.4,
-    1.0,
-    0.4, // The back green one
-    -0.5,
-    -0.5,
-    -0.4,
-    0.4,
-    1.0,
-    0.4,
-    0.5,
-    -0.5,
-    -0.4,
-    1.0,
-    0.4,
-    0.4,
+      // Vertex coordinates and color
+      0.0,  0.6,  -0.4,  0.4,  1.0,  0.4, // The back green one
+      -0.5, -0.4,  -0.4,  0.4,  1.0,  0.4,
+      0.5, -0.4,  -0.4,  1.0,  0.4,  0.4, 
+    
+      0.5,  0.4,  -0.2,  1.0,  0.4,  0.4, // The middle yellow one
+    -0.5,  0.4,  -0.2,  1.0,  1.0,  0.4,
+      0.0, -0.6,  -0.2,  1.0,  1.0,  0.4, 
 
-    0.5,
-    0.4,
-    -0.2,
-    1.0,
-    0.4,
-    0.4, // The middle yellow one
-    -0.5,
-    0.4,
-    -0.2,
-    1.0,
-    1.0,
-    0.4,
-    0.0,
-    -0.6,
-    -0.2,
-    1.0,
-    1.0,
-    0.4,
-
-    0.0,
-    0.5,
-    0.0,
-    0.4,
-    0.4,
-    1.0, // The front blue one
-    -0.5,
-    -0.5,
-    0.0,
-    0.4,
-    0.4,
-    1.0,
-    0.5,
-    -0.5,
-    0.0,
-    1.0,
-    0.4,
-    0.4,
+      0.0,  0.5,   0.0,  0.4,  0.4,  1.0, // The front blue one 
+    -0.5, -0.5,   0.0,  0.4,  0.4,  1.0,
+      0.5, -0.5,   0.0,  1.0,  0.4,  0.4,     
   ]);
 
   const vertexBuffer = gl.createBuffer();
@@ -146,34 +98,50 @@ function initVertexBuffer(gl: WebGL2RenderingContextWithProgram) {
   return n;
 }
 
-let g_eyeX = 0.2,
-  g_eyeY = 0.25,
-  g_eyeZ = 0.25;
+let g_near = 0.0,
+  g_far = 0.5;
 
 function keyDown(
   e: KeyboardEvent,
   gl: WebGL2RenderingContextWithProgram,
   n: number,
-  u_ViewMatrix,
-  viewMatrix: Matrix4
+  u_ProjMatrix,
+  projMatrix: Matrix4,
+  nf: HTMLPreElement
 ): void {
   switch (e.keyCode) {
     case KEY_CODE.right:
-      g_eyeX += .01;
+      g_near += 0.01;
       break;
     case KEY_CODE.left:
-      g_eyeX -= .01;
+      g_near -= 0.01;
+      break;
+    case KEY_CODE.up:
+      g_far += 0.01;
+      break;
+    case KEY_CODE.down:
+      g_far -= 0.01;
       break;
     default:
       return;
   }
-  draw(gl, n, u_ViewMatrix, viewMatrix);
+  draw(gl, n, u_ProjMatrix, projMatrix, nf);
 }
 
-function draw(gl: WebGL2RenderingContextWithProgram, n: number, u_ViewMatrix, viewMatrix: Matrix4): void{
-  viewMatrix.setLookAt(g_eyeX, g_eyeY, g_eyeZ, 0, 0, 0, 0, 1, 0);
-  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
+function draw(
+  gl: WebGL2RenderingContextWithProgram,
+  n: number,
+  u_ProjMatrix,
+  projMatrix: Matrix4,
+  nf: HTMLPreElement
+): void {
+  projMatrix.setOrtho(-1, 1, -1, 1, g_near, g_far);
+  gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
   gl.clear(gl.COLOR_BUFFER_BIT);
+  nf.innerHTML = `
+    near: ${Math.round(g_near * 100) / 100},
+    far: ${Math.round(g_far * 100) / 100}
+  `;
   gl.drawArrays(gl.TRIANGLES, 0, n);
 }
 
