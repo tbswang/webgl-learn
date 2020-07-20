@@ -20,3 +20,11 @@ export enum KEY_CODE {
   up = 38,
   down = 40,
 }
+
+export function ifErr(target: any, msg: string): Boolean{
+  if(!target){
+    err(msg);
+    return true;
+  }
+  return false;
+}
