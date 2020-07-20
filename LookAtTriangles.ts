@@ -10,9 +10,10 @@ const VSHADER_SOURCE = `
 attribute vec4 a_Position;
 attribute vec4 a_Color;
 uniform mat4 u_ViewMatrix;
+uniform mat4 u_ProjMatrix;
 varying vec4 v_Color;
 void main(){
-  gl_Position = u_ViewMatrix * a_Position;
+  gl_Position = u_ProjMatrix * u_ViewMatrix * a_Position;
   v_Color = a_Color;
 }
 `;
@@ -47,7 +48,16 @@ function main(): void {
 
   const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
   if (ifErr(u_ViewMatrix, 'fail to get u_ViewMatrix')) return;
+
+  const u_ProjMatrix = gl.getUniformLocation(gl.program, 'u_ProjMatrix');
+  if (ifErr(u_ProjMatrix, 'fail to get u_ProjMatrix')) return;
+  
   document.onkeydown = (e) => keyDown(e, gl, viewMatrix, u_ViewMatrix, n);
+
+  const projMatrix = new Matrix4();
+  projMatrix.setOrtho(-1, 1, -1, 1, 0,1);
+  gl.uniformMatrix4fv(u_ProjMatrix, false,projMatrix.elements);
+
   const viewMatrix = new Matrix4();
   draw(gl, viewMatrix, u_ViewMatrix, n);
 }
