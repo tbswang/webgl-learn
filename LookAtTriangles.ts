@@ -3,7 +3,7 @@ import {
   WebGL2RenderingContextWithProgram,
   initShaders,
 } from './cuon-utils';
-import { err, ifErr, black } from './common';
+import { err, ifErr, black, KEY_CODE } from './common';
 import { Matrix4 } from './cuon-matrix';
 
 const VSHADER_SOURCE = `
@@ -23,6 +23,7 @@ void main(){
   gl_FragColor = v_Color;
 }
 `;
+const pre = document.querySelector('p#eye');
 
 function main(): void {
   const canvas: HTMLCanvasElement = document.querySelector('canvas#lookat');
@@ -46,13 +47,9 @@ function main(): void {
 
   const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
   if (ifErr(u_ViewMatrix, 'fail to get u_ViewMatrix')) return;
-
+  document.onkeydown = (e) => keyDown(e, gl, viewMatrix, u_ViewMatrix, n);
   const viewMatrix = new Matrix4();
-  viewMatrix.setLookAt(0.2, 0.25, 0.25, 0.0, 0.0, 0.0, 0, 1, 0);
-  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
-
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawArrays(gl.TRIANGLES, 0, n);
+  draw(gl, viewMatrix, u_ViewMatrix, n);
 }
 
 function initVertexBuffer(gl: WebGL2RenderingContextWithProgram): number {
@@ -141,6 +138,47 @@ function initVertexBuffer(gl: WebGL2RenderingContextWithProgram): number {
   gl.enableVertexAttribArray(a_Color);
 
   return n;
+}
+
+let g_eyeX = 0.2,
+  g_eyeY = 0.25,
+  g_eyeZ = 0.25;
+function keyDown(
+  e: KeyboardEvent,
+  gl: WebGL2RenderingContextWithProgram,
+  viewMatrix: Matrix4,
+  u_ViewMatrix,
+  n: number
+) {
+  switch (e.keyCode) {
+    case KEY_CODE.left:
+      g_eyeX -= 0.01;
+      break;
+    case KEY_CODE.right:
+      g_eyeX += 0.01;
+      break;
+    default:
+      break;
+  }
+  draw(gl, viewMatrix, u_ViewMatrix, n);
+}
+
+function draw(
+  gl: WebGL2RenderingContextWithProgram,
+  viewMatrix: Matrix4,
+  u_ViewMatrix,
+  n: number
+) {
+  viewMatrix.setLookAt(g_eyeX, g_eyeY, g_eyeZ, 0.0, 0.0, 0.0, 0, 1, 0);
+  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
+
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.drawArrays(gl.TRIANGLES, 0, n);
+  pre.innerHTML = `
+  eyex: ${g_eyeX};
+  eyey: ${g_eyeY};
+  eyez: ${g_eyeZ}
+`;
 }
 
 main();
