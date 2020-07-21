@@ -52,76 +52,49 @@ function main(): void {
   const u_ProjMatrix = gl.getUniformLocation(gl.program, 'u_ProjMatrix');
   if (ifErr(u_ProjMatrix, 'fail to get u_ProjMatrix')) return;
   
-  document.onkeydown = (e) => keyDown(e, gl, viewMatrix, u_ViewMatrix, n);
+  // document.onkeydown = (e) => keyDown(e, gl, viewMatrix, u_ViewMatrix, n);
 
   const projMatrix = new Matrix4();
-  projMatrix.setOrtho(-1, 1, -1, 1, 0,1);
-  gl.uniformMatrix4fv(u_ProjMatrix, false,projMatrix.elements);
-
   const viewMatrix = new Matrix4();
+  // projMatrix.setOrtho(-1, 1, -1, 1, 0,1);
+  // gl.uniformMatrix4fv(u_ProjMatrix, false,projMatrix.elements);
+  viewMatrix.setLookAt(0,0, 5,0,0, -100,0, 1,0 );
+  projMatrix.setPerspective(30, canvas.width / canvas.height, 1, 100);
+
+  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
+  gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
+
   draw(gl, viewMatrix, u_ViewMatrix, n);
 }
 
 function initVertexBuffer(gl: WebGL2RenderingContextWithProgram): number {
-  const n = 9;
+  const n = 18;
   const verticesColor = new Float32Array([
-    // Vertex coordinates and color(RGBA)
-    0.0,
-    0.5,
-    -0.4,
-    0.4,
-    1.0,
-    0.4, // The back green one
-    -0.5,
-    -0.5,
-    -0.4,
-    0.4,
-    1.0,
-    0.4,
-    0.5,
-    -0.5,
-    -0.4,
-    1.0,
-    0.4,
-    0.4,
-
-    0.5,
-    0.4,
-    -0.2,
-    1.0,
-    0.4,
-    0.4, // The middle yellow one
-    -0.5,
-    0.4,
-    -0.2,
-    1.0,
-    1.0,
-    0.4,
-    0.0,
-    -0.6,
-    -0.2,
-    1.0,
-    1.0,
-    0.4,
-
-    0.0,
-    0.5,
-    0.0,
-    0.4,
-    0.4,
-    1.0, // The front blue one
-    -0.5,
-    -0.5,
-    0.0,
-    0.4,
-    0.4,
-    1.0,
-    0.5,
-    -0.5,
-    0.0,
-    1.0,
-    0.4,
-    0.4,
+     // Three triangles on the right side
+     0.75,  1.0,  -4.0,  0.4,  1.0,  0.4, // The back green one
+     0.25, -1.0,  -4.0,  0.4,  1.0,  0.4,
+     1.25, -1.0,  -4.0,  1.0,  0.4,  0.4, 
+ 
+     0.75,  1.0,  -2.0,  1.0,  1.0,  0.4, // The middle yellow one
+     0.25, -1.0,  -2.0,  1.0,  1.0,  0.4,
+     1.25, -1.0,  -2.0,  1.0,  0.4,  0.4, 
+ 
+     0.75,  1.0,   0.0,  0.4,  0.4,  1.0,  // The front blue one 
+     0.25, -1.0,   0.0,  0.4,  0.4,  1.0,
+     1.25, -1.0,   0.0,  1.0,  0.4,  0.4, 
+ 
+     // Three triangles on the left side
+    -0.75,  1.0,  -4.0,  0.4,  1.0,  0.4, // The back green one
+    -1.25, -1.0,  -4.0,  0.4,  1.0,  0.4,
+    -0.25, -1.0,  -4.0,  1.0,  0.4,  0.4, 
+ 
+    -0.75,  1.0,  -2.0,  1.0,  1.0,  0.4, // The middle yellow one
+    -1.25, -1.0,  -2.0,  1.0,  1.0,  0.4,
+    -0.25, -1.0,  -2.0,  1.0,  0.4,  0.4, 
+ 
+    -0.75,  1.0,   0.0,  0.4,  0.4,  1.0,  // The front blue one 
+    -1.25, -1.0,   0.0,  0.4,  0.4,  1.0,
+    -0.25, -1.0,   0.0,  1.0,  0.4,  0.4, 
   ]);
 
   const vertexColorBuffer = gl.createBuffer();
@@ -179,16 +152,16 @@ function draw(
   u_ViewMatrix,
   n: number
 ) {
-  viewMatrix.setLookAt(g_eyeX, g_eyeY, g_eyeZ, 0.0, 0.0, 0.0, 0, 1, 0);
-  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
+  // viewMatrix.setLookAt(g_eyeX, g_eyeY, g_eyeZ, 0.0, 0.0, 0.0, 0, 1, 0);
+  // gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
 
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.drawArrays(gl.TRIANGLES, 0, n);
-  pre.innerHTML = `
-  eyex: ${g_eyeX};
-  eyey: ${g_eyeY};
-  eyez: ${g_eyeZ}
-`;
+  // pre.innerHTML = `
+  //   eyex: ${g_eyeX};
+  //   eyey: ${g_eyeY};
+  //   eyez: ${g_eyeZ}
+  // `;
 }
 
 main();
