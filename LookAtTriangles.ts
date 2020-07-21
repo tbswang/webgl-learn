@@ -52,6 +52,9 @@ function main(): void {
 
   gl.clear(gl.COLOR_BUFFER_BIT);
 
+  gl.enable(gl.DEPTH_TEST);
+  gl.clear(gl.COLOR_BUFFER_BIT| gl.DEPTH_BUFFER_BIT);
+
   const projMatrix = new Matrix4();
   const viewMatrix = new Matrix4();
   const modelMatrix = new Matrix4();
@@ -75,17 +78,17 @@ function initVertexBuffer(gl: WebGL2RenderingContextWithProgram): number {
   const n = 9;
   const verticesColor = new Float32Array([
      // Three triangles on the right side
-     0,  1.0,  -4.0,  0.4,  1.0,  0.4, // The back green one
-     -0.5, -1.0,  -4.0,  0.4,  1.0,  0.4,
-     .5, -1.0,  -4.0,  1.0,  0.4,  0.4, 
+     0,  1.0,   0.0, 0.4,  1.0,  0.4, // The back green one
+     -0.5, -1.0,   0.0, 0.4,  1.0,  0.4,
+     .5, -1.0,   0.0, 1.0,  0.4,  0.4, 
  
      0,  1.0,  -2.0,  1.0,  1.0,  0.4, // The middle yellow one
      -0.5, -1.0,  -2.0,  1.0,  1.0,  0.4,
      .5, -1.0,  -2.0,  1.0,  0.4,  0.4, 
  
-     0,  1.0,   0.0,  0.4,  0.4,  1.0,  // The front blue one 
-     -0.5, -1.0,   0.0,  0.4,  0.4,  1.0,
-     .5, -1.0,   0.0,  1.0,  0.4,  0.4, 
+     0,  1.0,  -4.0,   0.4,  0.4,  1.0,  // The front blue one 
+     -0.5, -1.0,  -4.0,   0.4,  0.4,  1.0,
+     .5, -1.0,  -4.0,   1.0,  0.4,  0.4, 
  
      // Three triangles on the left side
     // -0.75,  1.0,  -4.0,  0.4,  1.0,  0.4, // The back green one
