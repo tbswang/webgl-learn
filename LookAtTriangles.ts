@@ -9,12 +9,10 @@ import { Matrix4 } from './cuon-matrix';
 const VSHADER_SOURCE = `
 attribute vec4 a_Position;
 attribute vec4 a_Color;
-uniform mat4 u_ModelMatrix;
-uniform mat4 u_ViewMatrix;
-uniform mat4 u_ProjMatrix;
+uniform mat4 u_MvpMatrix;
 varying vec4 v_Color;
 void main(){
-  gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;
+  gl_Position = u_MvpMatrix* a_Position;
   v_Color = a_Color;
 }
 `;
@@ -47,16 +45,9 @@ function main(): void {
 
   gl.clearColor(...black);
 
-  const u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
-  if (ifErr(u_ViewMatrix, 'fail to get u_ViewMatrix')) return;
+  const u_MvpMatrix = gl.getUniformLocation(gl.program, 'u_MvpMatrix');
+  if (ifErr(u_MvpMatrix, 'fail to get u_MvpMatrix')) return;
 
-  const u_ProjMatrix = gl.getUniformLocation(gl.program, 'u_ProjMatrix');
-  if (ifErr(u_ProjMatrix, 'fail to get u_ProjMatrix')) return;
-
-  const u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
-  if (ifErr(u_ModelMatrix, 'fail to get u_ModelMatrix')) return;
-  
-  
   // document.onkeydown = (e) => keyDown(e, gl, viewMatrix, u_ViewMatrix, n);
 
   gl.clear(gl.COLOR_BUFFER_BIT);
@@ -64,21 +55,20 @@ function main(): void {
   const projMatrix = new Matrix4();
   const viewMatrix = new Matrix4();
   const modelMatrix = new Matrix4();
-  // projMatrix.setOrtho(-1, 1, -1, 1, 0,1);
-  // gl.uniformMatrix4fv(u_ProjMatrix, false,projMatrix.elements);
+  const mvpMatrix = new Matrix4();
   modelMatrix.setTranslate(.75, 0, 0);
   viewMatrix.setLookAt(0,0, 5,0,0, -100,0, 1,0 );
   projMatrix.setPerspective(30, canvas.width / canvas.height, 1, 100);
 
-  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
-  gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  mvpMatrix.set(projMatrix).multiply(viewMatrix).multiply(modelMatrix);
 
-  draw(gl, viewMatrix, u_ViewMatrix, n);
+  gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements)
+  gl.drawArrays(gl.TRIANGLES, 0, n);
 
   modelMatrix.setTranslate(-.75, 0, 0);
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  draw(gl, viewMatrix,u_ViewMatrix, n);
+  mvpMatrix.set(projMatrix).multiply(viewMatrix).multiply(modelMatrix);
+  gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements)
+  gl.drawArrays(gl.TRIANGLES, 0, n);
 }
 
 function initVertexBuffer(gl: WebGL2RenderingContextWithProgram): number {
