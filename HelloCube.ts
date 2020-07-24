@@ -13,13 +13,15 @@ attribute vec4 a_Normal;
 uniform mat4 u_MvpMatrix;
 uniform vec3 u_LightColor;
 uniform vec3 u_LightDirection;
+uniform vec3 u_AmbientLight;
 varying vec4 v_Color;
   void main(){
     gl_Position = u_MvpMatrix * a_Position;
     vec3 normal = normalize(a_Normal.xyz);;
     float nDotL = max(dot(u_LightDirection, normal), 0.0);
     vec3 diffuse = u_LightColor * a_Color.rgb * nDotL;
-    v_Color = vec4(diffuse, a_Color.a);
+    vec3 ambient = u_AmbientLight * a_Color.rgb;
+    v_Color = vec4(diffuse + ambient, a_Color.a);
   }
 `;
 
@@ -55,8 +57,9 @@ function main(): void {
   const u_MvpMatrix: WebGLUniformLocation = gl.getUniformLocation(gl.program, 'u_MvpMatrix');
   const u_LightColor: WebGLUniformLocation = gl.getUniformLocation(gl.program, 'u_LightColor')
   const u_LightDirection:WebGLUniformLocation = gl.getUniformLocation(gl.program, 'u_LightDirection')
-  if (!u_MvpMatrix || !u_LightColor || !u_LightDirection) { 
-    err('fail to get location of mvpMatrix');
+  const u_AmbientLight: WebGLUniformLocation = gl.getUniformLocation(gl.program, 'u_AmbientLight');
+  if (!u_MvpMatrix || !u_LightColor || !u_LightDirection  || !u_AmbientLight) { 
+    err('fail to get location');
     return;
   }
 
@@ -65,6 +68,8 @@ function main(): void {
   const lightDirection: Vector3 = new Vector3([.5, 3,4])
   lightDirection.normalize();
   gl.uniform3fv(u_LightDirection, lightDirection.elements)
+
+  gl.uniform3f(u_AmbientLight, .2, .2,.2);
 
   const mvpMatrix: Matrix4 = new Matrix4();
   mvpMatrix.setPerspective(30, canvas.width/canvas.height,1 , 100)
