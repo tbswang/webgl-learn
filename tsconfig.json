@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
+    "baseUrl": ".",
     "paths": {
       "*": [
         "types/*"
+      ],
+      "@/*": [
+        "./*"
       ]
     }
   },
