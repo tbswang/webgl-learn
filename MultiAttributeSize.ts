@@ -1,5 +1,5 @@
 import {
-  WebGL2RenderingContextWithProgram,
+  WebGLRenderingContextWithProgram,
   getWebGLContext,
   initShaders,
 } from './cuon-utils';
@@ -25,7 +25,7 @@ function main() {
   const canvas: HTMLCanvasElement = document.getElementById(
     'point'
   ) as HTMLCanvasElement;
-  const gl: WebGL2RenderingContextWithProgram = getWebGLContext(canvas);
+  const gl: WebGLRenderingContextWithProgram = getWebGLContext(canvas);
   if (!gl) {
     console.error('fail to init shader');
     return;
@@ -46,7 +46,7 @@ function main() {
   gl.drawArrays(gl.TRIANGLES, 0, n);
 }
 
-function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
+function initVertexBuffers(gl: WebGLRenderingContextWithProgram) {
   const n = 3;
   // const verticesSizes: Float32Array = createPoint(n);
   const verticesSizes = new Float32Array([

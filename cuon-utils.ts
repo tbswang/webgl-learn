@@ -3,7 +3,10 @@
 import WebGLUtils from './webgl-utils.js';
 import  WebGLDebugUtils from './webgl-debug.js';
 
-export interface WebGL2RenderingContextWithProgram extends WebGL2RenderingContext{
+// export interface WebGLRenderingContextWithProgram extends WebGL2RenderingContext{
+//   program?: WebGLProgram
+// }
+export interface WebGLRenderingContextWithProgram extends WebGLRenderingContext{
   program?: WebGLProgram
 }
 
@@ -14,7 +17,7 @@ export interface WebGL2RenderingContextWithProgram extends WebGL2RenderingContex
  * @param fshader
  */
 export function initShaders(
-  gl: WebGL2RenderingContextWithProgram,
+  gl: WebGLRenderingContextWithProgram,
   vshader: string,
   fshader: string
 ): Boolean {
@@ -36,7 +39,7 @@ export function initShaders(
  * @param fshader
  */
 export function createProgram(
-  gl: WebGL2RenderingContext,
+  gl: WebGLRenderingContext,
   vshader: string,
   fshader: string
 ): WebGLProgram {
@@ -70,7 +73,7 @@ export function createProgram(
 }
 
 export function loadShader(
-  gl: WebGL2RenderingContext,
+  gl: WebGLRenderingContext,
   type: GLenum,
   source: string
 ): WebGLShader {
@@ -101,8 +104,9 @@ export function loadShader(
 export function getWebGLContext(
   canvas: HTMLCanvasElement,
   optp_debug?: Boolean
-): WebGL2RenderingContextWithProgram {
-  let gl: WebGL2RenderingContextWithProgram = WebGLUtils.setupWebGL(canvas);
+): WebGLRenderingContextWithProgram {
+  // let gl: WebGLRenderingContextWithProgram = WebGLUtils.setupWebGL(canvas);
+  let gl: WebGLRenderingContextWithProgram = canvas.getContext('webgl')
   if (!gl) return null;
 
   if (arguments.length < 2 || optp_debug) {

@@ -1,4 +1,4 @@
-import { WebGL2RenderingContextWithProgram } from './cuon-utils';
+import { WebGLRenderingContextWithProgram } from './cuon-utils';
 
 export const black: vec4 = [0.0, 0.0, 0.0, 1.0];
 
@@ -32,7 +32,7 @@ export function ifErr(target: any, msg: string): Boolean {
 }
 
 export function initArrayBuffers(
-  gl: WebGL2RenderingContextWithProgram,
+  gl: WebGLRenderingContextWithProgram,
   attribute: string,
   data: Float32Array,
   type: number,

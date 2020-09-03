@@ -1,7 +1,7 @@
 import {
   getWebGLContext,
   initShaders,
-  WebGL2RenderingContextWithProgram,
+  WebGLRenderingContextWithProgram,
 } from './cuon-utils';
 import { err, black, initArrayBuffers } from './common';
 import { Matrix4 } from './cuon-matrix';
@@ -41,7 +41,7 @@ const g_normalMatrix = new Matrix4();
 
 function main() {
   const canvas: HTMLCanvasElement = document.querySelector('canvas#jointmode');
-  const gl: WebGL2RenderingContextWithProgram = getWebGLContext(canvas);
+  const gl: WebGLRenderingContextWithProgram = getWebGLContext(canvas);
   if (!gl) {
     err('fail to init webgl');
     return;
@@ -80,7 +80,7 @@ function main() {
   draw(gl, n, viewProjMatrix, u_MvpMatrix, u_NoramlMatrix);
 }
 
-function initVertexBuffer(gl: WebGL2RenderingContextWithProgram) {
+function initVertexBuffer(gl: WebGLRenderingContextWithProgram) {
   // Vertex coordinates（a cuboid 3.0 in width, 10.0 in height, and 3.0 in length with its origin at the center of its bottom)
   let vertices = new Float32Array([
     1.5,
@@ -290,7 +290,7 @@ function initVertexBuffer(gl: WebGL2RenderingContextWithProgram) {
 }
 
 function draw(
-  gl: WebGL2RenderingContextWithProgram,
+  gl: WebGLRenderingContextWithProgram,
   n,
   viewProjMatrix: Matrix4,
   u_MvpMatrix: WebGLUniformLocation,
@@ -310,7 +310,7 @@ function draw(
 }
 
 function drawBox(
-  gl: WebGL2RenderingContextWithProgram,
+  gl: WebGLRenderingContextWithProgram,
   n,
   viewProjMatrix: Matrix4,
   u_MvpMatrix: WebGLUniformLocation,

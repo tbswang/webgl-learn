@@ -1,6 +1,6 @@
 import {
   getWebGLContext,
-  WebGL2RenderingContextWithProgram,
+  WebGLRenderingContextWithProgram,
   initShaders,
 } from './cuon-utils';
 import { err, ifErr, black, KEY_CODE } from './common';
@@ -74,7 +74,7 @@ function main(): void {
   gl.drawArrays(gl.TRIANGLES, 0, n);
 }
 
-function initVertexBuffer(gl: WebGL2RenderingContextWithProgram): number {
+function initVertexBuffer(gl: WebGLRenderingContextWithProgram): number {
   const n = 9;
   const verticesColor = new Float32Array([
      // Three triangles on the right side
@@ -135,7 +135,7 @@ let g_eyeX = 0.2,
   g_eyeZ = 0.25;
 function keyDown(
   e: KeyboardEvent,
-  gl: WebGL2RenderingContextWithProgram,
+  gl: WebGLRenderingContextWithProgram,
   viewMatrix: Matrix4,
   u_ViewMatrix,
   n: number
@@ -154,7 +154,7 @@ function keyDown(
 }
 
 function draw(
-  gl: WebGL2RenderingContextWithProgram,
+  gl: WebGLRenderingContextWithProgram,
   viewMatrix: Matrix4,
   u_ViewMatrix,
   n: number

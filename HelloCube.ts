@@ -1,7 +1,7 @@
 import {
   getWebGLContext,
   initShaders,
-  WebGL2RenderingContextWithProgram,
+  WebGLRenderingContextWithProgram,
 } from './cuon-utils';
 import { err, black } from './common';
 import { Matrix4, Vector3 } from './cuon-matrix';
@@ -36,7 +36,7 @@ varying vec4 v_Color;
 
 function main(): void {
   const canvas: HTMLCanvasElement = document.querySelector('canvas#cube');
-  const gl: WebGL2RenderingContextWithProgram = getWebGLContext(canvas);
+  const gl: WebGLRenderingContextWithProgram = getWebGLContext(canvas);
   if (!gl) {
     err('fail to get webgl context');
     return;
@@ -95,7 +95,7 @@ function main(): void {
 
 }
 
-function initVertexShader(gl: WebGL2RenderingContextWithProgram): number {
+function initVertexShader(gl: WebGLRenderingContextWithProgram): number {
   const vertices = new Float32Array([   // Coordinates
     1.0, 1.0, 1.0,  -1.0, 1.0, 1.0,  -1.0,-1.0, 1.0,   1.0,-1.0, 1.0, // v0-v1-v2-v3 front
     1.0, 1.0, 1.0,   1.0,-1.0, 1.0,   1.0,-1.0,-1.0,   1.0, 1.0,-1.0, // v0-v3-v4-v5 right
@@ -159,7 +159,7 @@ function initVertexShader(gl: WebGL2RenderingContextWithProgram): number {
   return indices.length;
 }
 
-function initArrayBuffer(gl: WebGL2RenderingContextWithProgram, data: any, num: number, type: number,attribute: string){
+function initArrayBuffer(gl: WebGLRenderingContextWithProgram, data: any, num: number, type: number,attribute: string){
   const buffer: WebGLBuffer = gl.createBuffer();
   if(!buffer){
     err('fail to create buffer');

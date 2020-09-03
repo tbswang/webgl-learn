@@ -1,7 +1,7 @@
 import {
   getWebGLContext,
   initShaders,
-  WebGL2RenderingContextWithProgram,
+  WebGLRenderingContextWithProgram,
 } from './cuon-utils';
 import { Matrix4 } from './cuon-matrix';
 import { black, COLOR } from './common';
@@ -30,7 +30,7 @@ function main() {
   const canvas: HTMLCanvasElement = document.getElementById(
     'point'
   ) as HTMLCanvasElement;
-  const gl: WebGL2RenderingContextWithProgram = getWebGLContext(canvas);
+  const gl: WebGLRenderingContextWithProgram = getWebGLContext(canvas);
   if (!gl) {
     console.error('fail to init webgl');
     return;
@@ -70,7 +70,7 @@ function main() {
 }
 
 function draw(
-  gl: WebGL2RenderingContextWithProgram,
+  gl: WebGLRenderingContextWithProgram,
   n: number,
   curentAngle: number,
   modelMatrix: Matrix4,
@@ -93,7 +93,7 @@ function animate(angle: number): number {
   return newAngle % 360.0;
 }
 
-function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
+function initVertexBuffers(gl: WebGLRenderingContextWithProgram) {
   const vertices = new Float32Array([0, 0.5, -0.5, -0.5, 0.5, -0.5]);
   const n = 3;
 
@@ -118,7 +118,7 @@ function initVertexBuffers(gl: WebGL2RenderingContextWithProgram) {
 
 main();
 
-function originPoint(gl: WebGL2RenderingContextWithProgram) {
+function originPoint(gl: WebGLRenderingContextWithProgram) {
   const VSHADER_SOURCE: string = `
   void main(){
     gl_Position = vec4(.0, .0, .0, 1.0);

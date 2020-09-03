@@ -1,7 +1,7 @@
 import {
   getWebGLContext,
   initShaders,
-  WebGL2RenderingContextWithProgram,
+  WebGLRenderingContextWithProgram,
 } from './cuon-utils';
 
 export type vec4 = [number, number, number, number];
@@ -36,7 +36,7 @@ let mouseDown = false;
 
 const click = (
   e: MouseEvent,
-  gl: WebGL2RenderingContextWithProgram,
+  gl: WebGLRenderingContextWithProgram,
   canvas: HTMLCanvasElement,
   a_Position: number,
   u_FragColor?
@@ -75,7 +75,7 @@ function main() {
   const canvas: HTMLCanvasElement = (document.getElementById('point') as HTMLCanvasElement);
   // const gl = canvas.getContext("webgl");
 
-  const gl: WebGL2RenderingContextWithProgram = getWebGLContext(canvas);
+  const gl: WebGLRenderingContextWithProgram = getWebGLContext(canvas);
   if (!gl) {
     console.error('falied to init webgl');
     return;

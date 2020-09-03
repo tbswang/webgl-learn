@@ -1,4 +1,4 @@
-import { WebGL2RenderingContextWithProgram } from './cuon-utils';
+import { WebGLRenderingContextWithProgram } from './cuon-utils';
 import { getWebGLContext } from './cuon-utils';
 import { initShaders } from './cuon-utils';
 import skyImg from './resources/sky.jpg';
@@ -31,7 +31,7 @@ function main(): void {
   const canvas: HTMLCanvasElement = document.getElementById(
     'point'
   ) as HTMLCanvasElement;
-  const gl: WebGL2RenderingContextWithProgram = getWebGLContext(canvas);
+  const gl: WebGLRenderingContextWithProgram = getWebGLContext(canvas);
   if (!gl) {
     console.error('fail to render context for webgl');
     return;
@@ -53,7 +53,7 @@ function main(): void {
   }
 }
 
-function initVertexBuffers(gl: WebGL2RenderingContextWithProgram): number {
+function initVertexBuffers(gl: WebGLRenderingContextWithProgram): number {
   const verticesTexCoords = new Float32Array([
     -0.5,
     0.5,
@@ -90,7 +90,7 @@ function initVertexBuffers(gl: WebGL2RenderingContextWithProgram): number {
   return n;
 }
 
-function initTextures(gl: WebGL2RenderingContextWithProgram, n: number) {
+function initTextures(gl: WebGLRenderingContextWithProgram, n: number) {
   const texture0 = gl.createTexture();
   const texture1 = gl.createTexture();
 
@@ -112,7 +112,7 @@ let g_texUnit0 = false,
   g_texUnit1 = false;
 
 function loadTexture(
-  gl: WebGL2RenderingContextWithProgram,
+  gl: WebGLRenderingContextWithProgram,
   n: number,
   texture: WebGLTexture,
   u_Sampler: WebGLUniformLocation,
