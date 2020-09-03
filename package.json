@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "rm -rf dist && rm -rf cache && parcel *.html",
+    "start:pre": "rm -rf dist && rm -rf cache && parcel presentation/*.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -19,6 +20,8 @@
     "typescript": "^3.9.6"
   },
   "dependencies": {
-    "@types/node": "^14.0.22"
+    "@types/node": "^14.0.22",
+    "@types/three": "^0.103.2",
+    "three": "^0.120.1"
   }
 }

@@ -11,7 +11,7 @@ export interface WebGLRenderingContextWithProgram extends WebGLRenderingContext{
 }
 
 /**
- * 给gl挂载一个对象
+ * 给gl挂载program
  * @param gl
  * @param vshader
  * @param fshader
