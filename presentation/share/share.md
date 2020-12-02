@@ -8,16 +8,15 @@ paginate: true
 
 # WebGL 入门到放弃
 
-WebGL(Web Graphics Library)在浏览器中渲染3D图形，并可与之交互的技术。
+WebGL(Web Graphics Library)是在浏览器中渲染3D图形，并可与之交互的技术。
 
-- WebGL实现
-- svg vs canvas vs WebGL
-- 一个简单的例子: 点
-- 再来一个例子: 彩色三角形
-- 一个复杂的例子: 立方体
-- 为何放弃
-- 相关的类库和参考资料
-
+* WebGL实现
+* svg vs canvas vs WebGL
+* 一个简单的例子: 点
+* 再来一个例子: 彩色三角形
+* 一个复杂的例子: 立方体
+* 为何放弃
+* 相关的类库和参考资料
 
 ---
 
@@ -76,6 +75,7 @@ WebGL(Web Graphics Library)在浏览器中渲染3D图形，并可与之交互的
   canvas中坐标系是二维的, 左上角为(0,0)
   WebGL中的坐标系是三维的, 坐标原点在中间. 右手坐标系
 -->
+
 ---
 ## 再来一个例子: 彩色三角形 
 
@@ -104,10 +104,11 @@ WebGL(Web Graphics Library)在浏览器中渲染3D图形，并可与之交互的
 ---
 
 ## 相关的类库和参考资料
-* three.js
-* deck.gl
-* babylon.js
-* [so on](https://gist.github.com/dmnsgn/76878ba6903cf15789b712464875cfdc)
+
+- three.js
+- deck.gl
+- babylon.js
+- [so on](https://gist.github.com/dmnsgn/76878ba6903cf15789b712464875cfdc)
 
 
 webgl编程指南

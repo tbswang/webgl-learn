@@ -28,7 +28,7 @@ void main(){
 `;
 const g_points: Array<vec2> = [];
 const g_colors: Array<vec4> = [];
-const red: vec4 = [1.0, 0.0, 0.0, 1.0];
+const red: vec4 = [255/255, 0.0, 0.0, 1.0];
 const black: vec4 = [0.0, 0.0, 0.0, 1.0];
 const green: vec4 = [0.0, 1.0, 0.0, 1.0] 
 const white: vec4 = [1.0, 1.0, 1.0, 1.0];
@@ -56,10 +56,11 @@ function main() {
     console.error('fail to get position of a_Position');
     return;
   }
-  gl.vertexAttrib3f(a_Position, 0.5, 0.5, 0.0);
+  gl.vertexAttrib3f(a_Position, 0.5, 0.5, -1.0);
+  gl.vertexAttrib3f(a_Position, 0.5, 0, -1.0);
 
   const a_PointSize: GLint = gl.getAttribLocation(gl.program, 'a_PointSize');
-  gl.vertexAttrib1f(a_PointSize, 50);
+  gl.vertexAttrib1f(a_PointSize, 20);
 
   const u_FragColor: WebGLUniformLocation = gl.getUniformLocation(gl.program, 'u_FragColor');
   gl.uniform4f(u_FragColor, ...red);
@@ -71,7 +72,7 @@ function main() {
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   // 绘制一个点
-  gl.drawArrays(gl.POINTS, 0, 1);
+  gl.drawArrays(gl.POINTS, 0, 2);
 }
 
 main();

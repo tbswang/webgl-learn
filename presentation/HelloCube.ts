@@ -54,6 +54,7 @@ function main(): void {
   gl.clearColor(...black);
   gl.enable(gl.DEPTH_TEST); // 开启深度检测
 
+  // -------------------------------设置颜色相关 start --------------------------------------------
   const u_MvpMatrix: WebGLUniformLocation = gl.getUniformLocation(gl.program, 'u_MvpMatrix');
   const u_LightColor: WebGLUniformLocation = gl.getUniformLocation(gl.program, 'u_LightColor')
   const u_LightDirection:WebGLUniformLocation = gl.getUniformLocation(gl.program, 'u_LightDirection')
@@ -80,6 +81,8 @@ function main(): void {
   mvpMatrix.lookAt(3,3,7, 0,0,0,0,1,0)
 
   gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);
+
+  // -------------------------------设置颜色相关 end --------------------------------------------
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
